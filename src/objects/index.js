@@ -1,0 +1,6 @@
+export * from './Page.js'
+export * from './text/FabricText.js'
+export * from './StaticImage.js'
+export * from './StaticVector.js'
+export * from './StaticPath.js'
+export * from './Background.js'
