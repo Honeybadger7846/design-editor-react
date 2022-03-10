@@ -5,6 +5,7 @@ import ObjectsHandler from './ObjectsHandler'
 import HistoryHandler from './HistoryHandler'
 import PanZoomHandler from './PanZoomHandler'
 import PersonalizationHandler from './PersonalizationHandler'
+import GuideHandler from './GuideHandler'
 import FontsHandler from './FontsHandler'
 import TemplateHandler from './TemplateHandler'
 class Handlers {
@@ -33,6 +34,7 @@ class Handlers {
         this.historyHandler = new HistoryHandler(handlerOptions)
         this.zoomHandler = new PanZoomHandler(handlerOptions)
         this.eventsHandler = new EventsHandler(handlerOptions)
+        this.guideHandler = new GuideHandler(handlerOptions)
         this.fontsHandler = new FontsHandler(handlerOptions)
         this.personalizationHandler = new PersonalizationHandler(handlerOptions)
     }

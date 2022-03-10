@@ -101,7 +101,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
 	cursorStyle: {},
 	_styleMap: [],
 	_fallbackStyles: {
-		fontFamily: 'Oswald',
+		fontFamily: 'OpenSans-Regular',
 		fontStyle: 'Regular',
 		fill: '#000000',
 		strokeColor: null,
@@ -140,11 +140,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
 			mb: false,
 			ml: false,
 			mr: false,
-			mt: false,
-			bl: false,
-			tl: false,
-			br: false,
-			tr: false,
+			mt: false
 		})
 		this.hiddenTextarea = fabric.document.createElement('textarea')
 		this.hiddenTextarea.setAttribute('autocapitalize', 'off')
@@ -217,7 +213,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
 		this.on('deselected', () => {
 			this.exitEditing()
 		})
-
+        /*
 		this.on('scaled', () => {
 			this._styleMap.forEach(style => {
 				style.fontSize *= this.scaleX
@@ -227,6 +223,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
 			this.computeLayout()
 			this.setCoords()
 		})
+		*/
 
 		this.setCursorStyles()
 
@@ -244,10 +241,6 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
 		this.setControlsVisibility({
 			bl: false,
 			br: false,
-			mb: false,
-			ml: false,
-			mr: false,
-			mt: false,
 			tl: false,
 			tr: false,
 			mtr: false,
@@ -271,15 +264,11 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
 		this.lockMovementX = false
 		this.lockMovementY = false
 		this.setControlsVisibility({
-			bl: false,
-			br: false,
-			mb: false,
-			ml: false,
-			mr: false,
-			mt: false,
-			tl: false,
-			tr: false,
-			mtr: true
+			bl: true,
+			br: true,
+			tl: true,
+			tr: true,
+			mtr: true,
 		})
 		if (this.__borderColor) {
 			this.borderColor = this.__borderColor
@@ -1454,7 +1443,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
 			lockUniResizing: this.lockUniResizing,
 			fontFamily: this.getCompleteStyle('fontFamily'),
 			fontStyle: this.getCompleteStyle('fontStyle'),
-			fontSize: typeof this.getCompleteStyle('fontSize') === 'string' ? this.getCompleteStyle('fontSize') : Number(Math.round((this.getCompleteStyle('fontSize') / fabric.DPI * 72) + 'e2') + 'e-2'),
+			fontSize: typeof this.getCompleteStyle('fontSize') === 'string' ? this.getCompleteStyle('fontSize') : this.getCompleteStyle('fontSize'),
 			fill: this.getCompleteStyle('fill'),
 			strokeColor: this.getCompleteStyle('strokeColor'),
 			strokeWidth: typeof this.getCompleteStyle('strokeWidth') === 'string' ? this.getCompleteStyle('strokeWidth') : Number(Math.round((this.getCompleteStyle('strokeWidth') / fabric.DPI * 72) + 'e2') + 'e-2'),

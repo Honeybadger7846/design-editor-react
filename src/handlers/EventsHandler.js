@@ -32,7 +32,7 @@ class EventsHandler extends BaseHandler {
             const {
                 target
             } = event;
-            if (target instanceof fabric.Textbox) {
+            if (target.type === 'StaticText') {
                 this.scaleTextbox(target);
             }
             this.handlers.historyHandler.save('object:modified');
@@ -91,17 +91,13 @@ class EventsHandler extends BaseHandler {
             delete this._middleClick
         };
         this.scaleTextbox = (target) => {
-            const {
-                fontSize,
-                width,
-                scaleX
-            } = target;
-            target.set({
-                fontSize: fontSize * scaleX,
-                width: width * scaleX,
-                scaleX: 1,
-                scaleY: 1
-            });
+            target._styleMap.forEach(style => {
+				style.fontSize = Math.floor(style.fontSize * target.scaleX)
+			})
+			target.scaleX = 1
+			target.scaleY = 1
+			target.computeLayout()
+			target.setCoords()
         };
         this.initialize();
     }
