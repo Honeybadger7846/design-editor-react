@@ -7,7 +7,14 @@ import { Input } from 'baseui/input'
 import { StatefulPopover, PLACEMENT } from 'baseui/popover'
 import { useEffect, useState } from 'react'
 import formatSizes from '../../../../../../constants/format-sizes'
-import { useEditor, useEditorContext } from '../../../../../../../../src'
+import { useEditor } from '../../../../../../../../src'
+import useAppContext from '../../../../../../hooks/useAppContext'
+
+const unit = [
+  {name: 'Pixel', id: 0},
+  {name: 'Centimeter', id: 1},
+  {name: 'Inch', id: 2}
+]
 
 const getLabel = ({ option }) => {
   return (
@@ -28,42 +35,87 @@ const Container = styled('div', props => ({
 
 export default function Page() {
   const editor = useEditor()
+  const { template, setTemplate, pageId } = useAppContext()
   const [value, setValue] = useState([])
   const [customSize, setCustomSize] = useState({ width: 0, height: 0 })
-  const { pageSize } = useEditorContext()
-
+  const [name, setName] = useState('')
+  const [unitValue, setUnitValue] = useState([])
+  const updateTemplate = () => {
+    if (template && template.pages) {
+      for (let i = 0; i < template.pages.length; i++) {
+        if (template.pages[i].id === pageId) template.pages[i] = editor.exportToJSON()
+      }
+      setTemplate(Object.assign({}, template))
+    }
+  }
+  const updateName = value => {
+    setName(value)
+    editor.page.handler.setName(value)
+    updateTemplate()
+  }
   const updateFormatSize = value => {
     setValue(value)
     const [page] = value
-
     editor.page.update(page.size)
+    updateTemplate()
+  }
+  const updateUnit = value => {
+    setUnitValue(value)
+    template.unit = value[0].name
+    updateTemplate()
   }
   const applyCustomSize = () => {
     if (customSize.width && customSize.height) {
       editor.page.update(customSize)
+      updateTemplate()
     }
   }
   useEffect(() => {
-    if (pageSize) {
-      setCustomSize(pageSize)
+    if (template.pages) {
+      let activePage = template.pages.find(page => page.id === pageId)
+      setName(activePage.name)
+      setUnitValue([{name: template.unit}])
+      setCustomSize({width: activePage.size.width, height: activePage.size.height})
     }
-  }, [pageSize])
+  }, [template, pageId])
 
   return (
     <StatefulPopover
       focusLock
-      placement={PLACEMENT.bottomLeft}
+      placement={PLACEMENT.bottom}
       content={({ close }) => (
         <ThemeProvider theme={LightTheme}>
           <Container>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>Name</div>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <Input
+                  value={name}
+                  onChange={e => updateName(e.target.value)}
+                  placeholder="name"
+                />
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               <div>Preset</div>
               <Select
                 options={formatSizes}
-                labelKey="name"
-                valueKey="id"
+                valueKey="name"
                 onChange={({ value }) => updateFormatSize(value)}
                 value={value}
+                getValueLabel={getLabel}
+                getOptionLabel={getLabel}
+                clearable={false}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              <div>Unit</div>
+              <Select
+                options={unit}
+                labelKey="name"
+                valueKey="id"
+                onChange={({ value }) => updateUnit(value)}
+                value={unitValue}
                 getValueLabel={getLabel}
                 getOptionLabel={getLabel}
                 clearable={false}
@@ -74,24 +126,24 @@ export default function Page() {
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <Input
                   value={customSize.width}
-                  onChange={e => setCustomSize({ ...customSize, width: e.target.value })}
+                  onChange={e => setCustomSize({ ...customSize, width: Number(e.target.value) })}
                   startEnhancer="W"
                   placeholder="width"
                 />
                 <Input
                   value={customSize.height}
-                  onChange={e => setCustomSize({ ...customSize, height: e.target.value })}
+                  onChange={e => setCustomSize({ ...customSize, height: Number(e.target.value) })}
                   startEnhancer="H"
                   placeholder="width"
                 />
               </div>
-              <Button onClick={() => applyCustomSize()}>Apply</Button>
+              <Button onClick={() => {applyCustomSize(); close()}}>Apply</Button>
             </div>
           </Container>
         </ThemeProvider>
       )}
     >
-      <Button kind={KIND.tertiary}>Page</Button>
+      <Button kind={KIND.tertiary}>Edit Page</Button>
     </StatefulPopover>
   )
 }

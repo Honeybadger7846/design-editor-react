@@ -3341,7 +3341,6 @@ Typr["U"] = {
 	},
 
 	"pathToSVG": function (path, prec, shouldApplyTransform, transform) {
-		console.log(shouldApplyTransform, transform)
 		var cmds = [...path["cmds"]],
 			crds = [...path["crds"]];
 		if (prec == null) prec = 5;

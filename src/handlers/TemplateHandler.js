@@ -34,26 +34,32 @@ class TemplateHandler extends BaseHandler {
     exportToJSON() {
         const canvasJSON = this.canvas.toJSON(this.handlers.propertiesToInclude)
         const frameOptions = this.handlers.pageHandler.getOptions()
-        const page = {
-            name: 'Page 1',
+        const page = this.handlers.pageHandler.getPage()
+        const pageExport = {
+            name: page.name,
+            id: page.id,
             objects: [],
             background: frameOptions.fill || '#fff',
             size: {
                 width: frameOptions.width,
                 height: frameOptions.height
-            }
+            },
+            preview: this.handlers.pageHandler.getSVG()
         }
         const objects = canvasJSON.objects.filter(object => object.type !== 'Page')
         objects.forEach(object => {
             const exportedObject = exportObject.run(object, frameOptions)
-            page.objects = page.objects.concat(exportedObject)
+            pageExport.objects = pageExport.objects.concat(exportedObject)
         })
-        return page
+        return pageExport
     }
     async importFromJSON(page) {
         this.handlers.objectsHandler.clearAll()
+        this.handlers.objectsHandler.deselect()
         this.handlers.pageHandler.initialize()
         this.handlers.pageHandler.setSize(page.size)
+        this.handlers.pageHandler.setName(page.name)
+        this.handlers.pageHandler.setId(page.id)
         this.handlers.pageHandler.setBackgroundColor(page.background || '#fff')
         const frameOptions = this.handlers.pageHandler.getOptions()
         for (const object of page.objects) {

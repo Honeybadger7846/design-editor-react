@@ -123,6 +123,9 @@ class Editor extends EventManager {
     setShadow(options) {
         this.handlers.objectsHandler.setShadow(options)
     }
+    clear() {
+        this.handlers.objectsHandler.clearAll(true)
+    }
     exportToJSON() {
         return this.handlers.templateHandler.exportToJSON()
     }

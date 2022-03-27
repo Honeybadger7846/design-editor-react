@@ -38,7 +38,7 @@ function Canvas({ config }) {
             }
         };
     }, []);
-    return (React.createElement("div", { id: "scenify-editor-container", ref: containerRef, style: { flex: 1, position: 'relative', overflow: 'hidden' } },
+    return (React.createElement("div", { id: "editor-container", ref: containerRef, style: { flex: 1, position: 'relative', overflow: 'hidden' } },
         React.createElement("div", { style: {
                 position: 'absolute',
                 height: '100%',

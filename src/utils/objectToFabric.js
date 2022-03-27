@@ -29,7 +29,6 @@ class ObjectToFabric {
     [ObjectType.STATIC_TEXT](item, options, inGroup) {
         return new Promise((resolve, reject) => {
             try {
-                console.log(item)
                 const element = new fabric.StaticText(item)
                 resolve(element)
             }

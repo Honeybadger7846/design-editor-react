@@ -1,6 +1,7 @@
 import * as React from 'react'
 import useAppContext from '../../../../../hooks/useAppContext'
 import { useState } from 'react'
+import { useEffect } from 'react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Input, SIZE } from 'baseui/input'
 import Icons from '../../../../../components/icons'
@@ -8,8 +9,15 @@ import { useEditor } from '../../../../../../../src'
 
 function Templates() {
   const editor = useEditor()
-  const { templates } = useAppContext()
+  const { templates, setTemplate, templateIndex, setTemplateIndex, setPageId } = useAppContext()
   const [value, setValue] = useState('')
+
+  let initTemplate = (template) => {
+    setTemplate(Object.assign({}, template))
+    // init first page
+    if (template && template.pages[0]) setPageId(template.pages[0].id)
+  }
+
   return (
     <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
       <div style={{ padding: '1rem 1rem', fontSize: '0.75rem' }}>
@@ -27,9 +35,9 @@ function Templates() {
           <div
             style={{ display: 'grid', gap: '0.5rem', padding: '0 2rem 2rem', gridTemplateColumns: '1fr 1fr' }}
           >
-            {templates.map(template => (
+            {templates.map((template, index) => (
               <div
-                key={template.id}
+                key={index}
                 dangerouslySetInnerHTML={{__html: template.preview}}
                 style={{
                   alignItems: 'center',
@@ -38,7 +46,7 @@ function Templates() {
                   padding: '5px',
                   maxWidth: '150px',
                 }}
-                onClick={() => editor.importFromJSON(template)}
+                onClick={() => initTemplate(template)}
               >
               </div>
             ))}

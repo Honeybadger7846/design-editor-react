@@ -5,10 +5,11 @@ import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Panels from './components/Panels'
 import Toolbox from './components/Toolbox'
+import Pages from './components/Pages'
 import { useEditor } from '../../../../src'
 import Editor from '../../../../src'
 
-function App() {
+function App({props}) {
   const { setTemplates, setElements, setPhotos, setFonts, isMobile } = useAppContext()
   const editor = useEditor()
   useEffect(() => {
@@ -48,6 +49,7 @@ function App() {
           <div style={{ flex: 1, display: 'flex', padding: '1px' }}>
             <Editor config={editorConfig} />
           </div>
+          <Pages />
         </div>
       </div>
     </div>

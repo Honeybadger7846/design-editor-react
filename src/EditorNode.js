@@ -59,10 +59,14 @@ export default class {
         })
         const stream = doc.pipe(new Base64Encode())
         let base64PDF = ''
+        console.log(this.getSVG())
         doc.addSVG(this.getSVG(), 0, 0, {
             width: page.width,
             height: page.height,
             preserveAspectRatio: `${page.width}x${page.height}`,
+            imageCallback: function(opt) {
+                console.log(opt)
+            }
           })
         doc.end()
         stream.on('data', (chunk) => {

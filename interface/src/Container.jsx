@@ -3,7 +3,6 @@ import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import useAppContext from './hooks/useAppContext'
 import Loading from './components/Loading'
-import { editorFonts } from './constants/fonts'
 
 function Container({ children }) {
   const containerRef = useRef()
@@ -33,31 +32,13 @@ function Container({ children }) {
         resizeObserver.unobserve(containerElement)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    loadFonts()
     setTimeout(() => {
       setLoaded(true)
-    }, 10)
+    }, 1500)
   }, [])
-
-  const loadFonts = () => {
-    const promisesList = editorFonts.map(font => {
-      // @ts-ignore
-      return new FontFace(font.name, `url(${font.url})`, font.options).load().catch(err => err)
-    })
-    Promise.all(promisesList)
-      .then(res => {
-        res.forEach(uniqueFont => {
-          if (uniqueFont && uniqueFont.family) {
-            document.fonts.add(uniqueFont)
-          }
-        })
-      })
-      .catch(err => console.log({ err }))
-  }
 
   return (
     <div

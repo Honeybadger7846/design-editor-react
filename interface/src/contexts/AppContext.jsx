@@ -6,6 +6,12 @@ export const AppContext = createContext({
     setIsMobile: () => { },
     templates: [],
     setTemplates: () => { },
+    template: null,
+    setTemplate: () => { },
+    templateIndex: 0,
+    setTemplateIndex: () => { },
+    pageId: null,
+    setPageId: () => { },
     elements: [],
     setElements: () => { },
     photos: [],
@@ -20,6 +26,9 @@ export const AppContext = createContext({
 export const AppProvider = ({ children }) => {
     const [isMobile, setIsMobile] = useState(undefined);
     const [templates, setTemplates] = useState([]);
+    const [template, setTemplate] = useState(null);
+    const [templateIndex, setTemplateIndex] = useState(0);
+    const [pageId, setPageId] = useState(null);
     const [elements, setElements] = useState([]);
     const [photos, setPhotos] = useState([]);
     const [fonts, setFonts] = useState([]);
@@ -30,6 +39,12 @@ export const AppProvider = ({ children }) => {
         setIsMobile,
         templates,
         setTemplates,
+        template,
+        setTemplate,
+        templateIndex,
+        setTemplateIndex,
+        pageId,
+        setPageId,
         activePanel,
         setActivePanel,
         elements,

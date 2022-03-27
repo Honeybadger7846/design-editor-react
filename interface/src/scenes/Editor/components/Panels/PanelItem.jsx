@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as React from 'react'
 import useAppContext from '../../../../hooks/useAppContext'
 import { useEditorContext } from '../../../../../../src'
@@ -24,7 +23,6 @@ function PanelsList() {
     if (!activeObject) {
       setActiveSubMenu(null)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeObject])
 
   const Component = activeObject && activeSubMenu ? PanelItems[activeSubMenu] : PanelItems[activePanel]

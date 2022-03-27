@@ -6,6 +6,7 @@ import { useEditor } from '../../../../../../src'
 import api from '../../../../services/api'
 import Zoom from './components/Zoom'
 import { template } from './template'
+import useAppContext from '../../../../hooks/useAppContext'
 import { size } from 'lodash'
 /*
          <Button onClick={handleLoadTemplate} kind={KIND.secondary}>
@@ -23,10 +24,13 @@ const Container = styled('div', props => ({
 
 function NavbarEditor() {
   const editor = useEditor()
+  const { template } = useAppContext()
   const downloadImage = async () => {
+    console.log(template)
+    /*
     if (editor) {
       
-      console.log(editor.exportToJSON(), editor.getPageSVG())
+      console.log(editor.getPageSVG())
       await api.downloadTemplate({page: editor.exportToJSON()}).then(result => {
         function base64ToArrayBuffer(base64) {
           var binaryString = window.atob(base64);
@@ -49,6 +53,7 @@ function NavbarEditor() {
       saveByteArray('output', base64ToArrayBuffer(result))
    })
   }
+  */
   }
 
   const handleLoadTemplate = async () => {

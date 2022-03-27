@@ -38,6 +38,14 @@ class PageHandler extends BaseHandler {
             page.center()
             this.handlers.zoomHandler.zoomToFit()
         }
+        this.setName = (name) => {
+            const page = this.getPage()
+            page.set('name', name)
+        }
+        this.setId = (id) => {
+            const page = this.getPage()
+            page.set('id', id)
+        }
         this.setBackgroundColor = (color) => {
             const page = this.getPage()
             page.set('fill', color)
@@ -66,7 +74,7 @@ class PageHandler extends BaseHandler {
             }
             return scaleX
         }
-        this.initialize()
+        //this.initialize()
     }
     initialize() {
         const page = new fabric.Page({
