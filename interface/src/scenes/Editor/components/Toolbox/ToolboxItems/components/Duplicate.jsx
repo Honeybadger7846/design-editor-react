@@ -1,14 +1,14 @@
-import * as React from 'react'
-import { useEditor } from '../../../../../../../../src'
-import { Button, SHAPE, KIND, SIZE } from 'baseui/button'
-import Icons from '../../../icons'
+import * as React from "react";
+import { useEditor } from "../../../../../../../../src";
+import { Button, SHAPE, KIND, SIZE } from "baseui/button";
+import Icons from "../../../icons";
 
 function Duplicate() {
-  const editor = useEditor()
+  const editor = useEditor();
   return (
     <Button
       onClick={() => {
-        editor.clone()
+        editor.clone();
       }}
       size={SIZE.default}
       kind={KIND.tertiary}
@@ -16,7 +16,7 @@ function Duplicate() {
     >
       <Icons.Duplicate size={24} />
     </Button>
-  )
+  );
 }
 
-export default Duplicate
+export default Duplicate;

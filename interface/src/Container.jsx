@@ -1,58 +1,57 @@
 //@ts-nocheck
-import * as React from 'react'
-import { useEffect, useRef, useState } from 'react'
-import useAppContext from './hooks/useAppContext'
-import Loading from './components/Loading'
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import useAppContext from "./hooks/useAppContext";
+import Loading from "./components/Loading";
 
 function Container({ children }) {
-  const containerRef = useRef()
-  const { isMobile, setIsMobile } = useAppContext()
-  const [loaded, setLoaded] = useState(false)
+  const containerRef = useRef();
+  const { isMobile, setIsMobile } = useAppContext();
+  const [loaded, setLoaded] = useState(false);
 
   const updateMediaQuery = (value) => {
     if (!isMobile && value >= 800) {
-      setIsMobile(false)
+      setIsMobile(false);
     } else if (!isMobile && value < 800) {
-      setIsMobile(true)
+      setIsMobile(true);
     } else {
-      setIsMobile(false)
+      setIsMobile(false);
     }
-  }
+  };
   useEffect(() => {
-    const containerElement = containerRef.current
-    const containerWidth = containerElement.clientWidth
-    updateMediaQuery(containerWidth)
-    const resizeObserver = new ResizeObserver(entries => {
-      const { width = containerWidth } = (entries[0] && entries[0].contentRect) || {}
-      updateMediaQuery(width)
-    })
-    resizeObserver.observe(containerElement)
+    const containerElement = containerRef.current;
+    const containerWidth = containerElement.clientWidth;
+    updateMediaQuery(containerWidth);
+    const resizeObserver = new ResizeObserver((entries) => {
+      const { width = containerWidth } =
+        (entries[0] && entries[0].contentRect) || {};
+      updateMediaQuery(width);
+    });
+    resizeObserver.observe(containerElement);
     return () => {
       if (containerElement) {
-        resizeObserver.unobserve(containerElement)
+        resizeObserver.unobserve(containerElement);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoaded(true)
-    }, 1500)
-  }, [])
+    setLoaded(true);
+  }, []);
 
   return (
     <div
       ref={containerRef}
       style={{
         flex: 1,
-        display: 'flex',
-        height: '100vh',
-        width: '100vw'
+        display: "flex",
+        height: "100vh",
+        width: "100vw",
       }}
     >
       {loaded ? <>{children} </> : <Loading />}
     </div>
-  )
+  );
 }
 
-export default Container
+export default Container;

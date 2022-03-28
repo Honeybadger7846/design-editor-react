@@ -1,5 +1,5 @@
-import { AppContext } from '../contexts/AppContext'
-import { useContext } from 'react'
+import { AppContext } from "../contexts/AppContext";
+import { useContext } from "react";
 
 function useAppContext() {
   const {
@@ -13,8 +13,8 @@ function useAppContext() {
     setTemplate,
     templateIndex,
     setTemplateIndex,
-    pageId,
-    setPageId,
+    activePage,
+    setActivePage,
     elements,
     setElements,
     fonts,
@@ -23,7 +23,9 @@ function useAppContext() {
     setPhotos,
     activeSubMenu,
     setActiveSubMenu,
-  } = useContext(AppContext)
+    userInterface,
+    setUserInterface,
+  } = useContext(AppContext);
   return {
     isMobile,
     setIsMobile,
@@ -35,8 +37,8 @@ function useAppContext() {
     setTemplate,
     templateIndex,
     setTemplateIndex,
-    pageId,
-    setPageId,
+    activePage,
+    setActivePage,
     elements,
     setElements,
     fonts,
@@ -45,7 +47,9 @@ function useAppContext() {
     setPhotos,
     activeSubMenu,
     setActiveSubMenu,
-  }
+    userInterface,
+    setUserInterface,
+  };
 }
 
-export default useAppContext
+export default useAppContext;
