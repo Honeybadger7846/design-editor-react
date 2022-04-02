@@ -23,8 +23,10 @@ function useAppContext() {
     setPhotos,
     activeSubMenu,
     setActiveSubMenu,
-    userInterface,
-    setUserInterface,
+    adminRole,
+    setAdminRole,
+    visiblePages,
+    setVisiblePages,
   } = useContext(AppContext);
   return {
     isMobile,
@@ -47,8 +49,10 @@ function useAppContext() {
     setPhotos,
     activeSubMenu,
     setActiveSubMenu,
-    userInterface,
-    setUserInterface,
+    adminRole,
+    setAdminRole,
+    visiblePages,
+    setVisiblePages,
   };
 }
 

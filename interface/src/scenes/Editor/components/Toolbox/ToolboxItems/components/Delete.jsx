@@ -1,15 +1,20 @@
-import * as React from 'react'
-import { useEditor } from '../../../../../../../../src'
-import { Button, SHAPE, KIND, SIZE } from 'baseui/button'
-import Icons from '../../../icons'
+import * as React from "react";
+import { useEditor } from "../../../../../../../../src";
+import { Button, SHAPE, KIND, SIZE } from "baseui/button";
+import Icons from "../../../icons";
 
 function Delete() {
-  const editor = useEditor()
+  const editor = useEditor();
   return (
-    <Button onClick={() => editor.delete()} size={SIZE.default} kind={KIND.tertiary} shape={SHAPE.square}>
+    <Button
+      onClick={() => editor.delete()}
+      size={SIZE.compact}
+      kind={KIND.tertiary}
+      shape={SHAPE.square}
+    >
       <Icons.Delete size={24} />
     </Button>
-  )
+  );
 }
 
-export default Delete
+export default Delete;

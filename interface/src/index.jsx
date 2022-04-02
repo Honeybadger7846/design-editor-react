@@ -4,12 +4,12 @@ import * as ReactDOM from "react-dom";
 import Providers from "./Providers";
 import Editor from "./scenes/Editor";
 import Container from "./Container";
-import { Template, Interface } from "./constants/editor";
+import { Template } from "./constants/editor";
 
 ReactDOM.render(
   <Providers>
     <Container>
-      <Editor template={Template} interface={Interface} />
+      <Editor template={Template} adminRole={true} />
     </Container>
   </Providers>,
   document.getElementById("root")

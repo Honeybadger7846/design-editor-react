@@ -127,6 +127,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
   _layout: null,
   hiddenTextarea: null,
   isEditing: false,
+  lockEditing: false,
   fonts: null,
   _selectionStart: 0,
   _selectionEnd: 0,
@@ -151,6 +152,103 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       mr: false,
       mt: false,
     });
+
+    if (this.textMarkup) {
+      this.transformTextMarkup();
+    }
+    this.computeLayout();
+    this.on("selected", () => {
+      this._selected = true;
+    });
+    this.on("mousedown", (options) => {
+      options = options || {};
+      if (options.e) {
+        this.__newCursorPosition = this.getClosestCharIndexToMousePointer(
+          options.e
+        );
+        let cursorMoved =
+          this.__newCursorPosition !== this.getCursorPosition() ? true : false;
+        this.setCursorPosition(this.__newCursorPosition);
+        if (this.canvas) {
+          if (this.isEditing) {
+            this.hiddenTextarea.focus();
+            if (cursorMoved) this.setCursorStyles();
+            this.setMarkSelection(true);
+          } else {
+            if (!this._selected) this._mouseDownEvent = true;
+          }
+          this.canvas.requestRenderAll();
+        }
+      }
+    });
+    this.on("mousemove", (options) => {
+      if (this._mouseDownEvent) delete this._mouseDownEvent;
+      if (this.canvas) {
+        if (this.isEditing && this.isMarkSelection()) {
+          this.setCursorPosition(
+            this.getClosestCharIndexToMousePointer(options.e)
+          );
+          let cursorMoved =
+            this.__newCursorPosition !== this.getCursorPosition()
+              ? true
+              : false;
+          this.__newCursorPosition = this.getCursorPosition();
+          if (this.canvas && cursorMoved) {
+            this.canvas.requestRenderAll();
+            this.canvas.fire("text:selection:changed", {
+              target: this,
+            });
+          }
+        }
+      }
+    });
+    this.on("mouseup", (options) => {
+      if (this.canvas) {
+        if (this.isEditing) {
+          this.hiddenTextarea.focus();
+          this.setMarkSelection(false);
+          if (options.e.detail === 2) {
+            this.selectWord();
+          }
+        } else if (this._mouseDownEvent) {
+          this.enterEditing();
+          delete this._mouseDownEvent;
+        }
+        this.canvas.requestRenderAll();
+        if (this._mouseDownEvent) delete this._mouseDownEvent;
+      }
+      if (this._selected) delete this._selected;
+    });
+    /*
+    this.on("mousedblclick", () => {
+      if (!this.isEditing) {
+        this.enterEditing();
+      }
+    });
+    */
+    this.on("deselected", () => {
+      this.exitEditing();
+    });
+    /*
+		this.on('scaled', () => {
+			this._styleMap.forEach(style => {
+				style.fontSize *= this.scaleX
+			})
+			this.scaleX = 1
+			this.scaleY = 1
+			this.computeLayout()
+			this.setCoords()
+		})
+		*/
+
+    this.setCursorStyles();
+
+    if (this.isEditing) {
+      this.enterEditing();
+    }
+  },
+  clearContextTop() {},
+  initTextarea() {
     this.hiddenTextarea = fabric.document.createElement("textarea");
     this.hiddenTextarea.setAttribute("autocapitalize", "off");
     this.hiddenTextarea.setAttribute("autocorrect", "off");
@@ -186,92 +284,56 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       "focusout",
       this.onFocusOut.bind(this)
     );
-
-    if (this.textMarkup) {
-      this.transformTextMarkup();
-      this.hiddenTextarea.value = this.text || this.textMarkup;
+    this.hiddenTextarea.value = this.text || this.textMarkup;
+    this.hiddenTextarea.setSelectionRange(
+      this.getSelectionStart(),
+      this.getSelectionEnd()
+    );
+    this.hiddenTextarea.focus();
+  },
+  destroyTextarea() {
+    if (this.hiddenTextarea) {
+      this.hiddenTextarea.blur && this.hiddenTextarea.blur();
+      this.hiddenTextarea.parentNode &&
+        this.hiddenTextarea.parentNode.removeChild(this.hiddenTextarea);
     }
-    this.computeLayout();
-    this.on("mousedown", (options) => {
-      options = options || {};
-      if (options.e) {
-        this.__newCursorPosition = this.getClosestCharIndexToMousePointer(
-          options.e
-        );
-        let cursorMoved =
-          this.__newCursorPosition !== this.getCursorPosition() ? true : false;
-        this.setCursorPosition(this.__newCursorPosition);
-        if (this.canvas) {
-          if (this.isEditing) {
-            this.hiddenTextarea.focus();
-            if (cursorMoved) this.setCursorStyles();
-            this.setMarkSelection(true);
-          }
-          this.canvas.requestRenderAll();
-        }
-      }
-    });
-    this.on("mousemove", (options) => {
-      if (this.canvas) {
-        if (this.isEditing && this.isMarkSelection()) {
-          this.setCursorPosition(
-            this.getClosestCharIndexToMousePointer(options.e)
-          );
-          let cursorMoved =
-            this.__newCursorPosition !== this.getCursorPosition()
-              ? true
-              : false;
-          this.__newCursorPosition = this.getCursorPosition();
-          if (this.canvas && cursorMoved) {
-            this.canvas.requestRenderAll();
-            this.canvas.fire("text:selection:changed", {
-              target: this,
-            });
-          }
-        }
-      }
-    });
-    this.on("mouseup", (options) => {
-      if (this.canvas) {
-        if (this.isEditing) {
-          this.hiddenTextarea.focus();
-          this.setMarkSelection(false);
-          if (options.e.detail === 2) {
-            this.selectWord();
-          }
-        }
-        this.canvas.requestRenderAll();
-      }
-    });
-    this.on("mousedblclick", () => {
-      if (!this.isEditing) {
-        this.enterEditing();
-      }
-    });
-    this.on("deselected", () => {
-      this.exitEditing();
-    });
-    /*
-		this.on('scaled', () => {
-			this._styleMap.forEach(style => {
-				style.fontSize *= this.scaleX
-			})
-			this.scaleX = 1
-			this.scaleY = 1
-			this.computeLayout()
-			this.setCoords()
-		})
-		*/
-
-    this.setCursorStyles();
-
-    if (this.isEditing) {
-      this.enterEditing();
+    this.hiddenTextarea = null;
+  },
+  zoomIn() {
+    if (
+      this.canvas &&
+      document &&
+      document.body &&
+      document.body.clientWidth < 800
+    ) {
+      this._canvasViewportTransform = [...this.canvas.viewportTransform];
+      this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+      this.canvas.absolutePan({
+        x: this.getCenterPoint().x - this.canvas.width / 2,
+        y: this.top,
+      });
+      const center = this.canvas.getCenter();
+      this.canvas.zoomToPoint(
+        new fabric.Point(center.left, center.top),
+        this.canvas.width / (this.width * 2)
+      );
+      this.canvas.requestRenderAll();
+    }
+  },
+  zoomOut() {
+    if (this._canvasViewportTransform && this.canvas) {
+      this.canvas.setViewportTransform(this._canvasViewportTransform);
+      delete this._canvasViewportTransform;
+      this.canvas.requestRenderAll();
     }
   },
   enterEditing() {
+    if (this.lockEditing) return;
     this.isEditing = true;
+
     this.hoverCursor = "text";
+    this._lockMovementX = this.lockMovementX;
+    this._lockMovementY = this.lockMovementY;
     this.lockMovementX = true;
     this.lockMovementY = true;
     this.fire("editing:entered");
@@ -287,21 +349,21 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       : this.borderColor;
     this.borderColor = "rgba(0,0,0,0)";
 
-    if (this.hiddenTextarea) {
-      this.hiddenTextarea.focus();
-    }
+    this.initTextarea();
     if (!this.canvas) {
       return this;
     }
+
     this.canvas.fire("text:editing:entered", {
       target: this,
     });
+    this.zoomIn();
   },
   exitEditing() {
     this.isEditing = false;
     this.hoverCursor = "all-scroll";
-    this.lockMovementX = false;
-    this.lockMovementY = false;
+    this.lockMovementX = this._lockMovementX;
+    this.lockMovementY = this._lockMovementY;
     this.setControlsVisibility({
       bl: true,
       br: true,
@@ -313,11 +375,13 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       this.borderColor = this.__borderColor;
       delete this.__borderColor;
     }
+    this.destroyTextarea();
     this.fire("editing:exited");
     if (this.canvas) {
       this.canvas.fire("text:editing:exited", {
         target: this,
       });
+      this.zoomOut();
       this.canvas.requestRenderAll();
     }
   },
@@ -419,11 +483,12 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
         this._selectionEnd =
           newCursorPosition;
     }
-
-    this.hiddenTextarea.setSelectionRange(
-      this.getSelectionStart(),
-      this.getSelectionEnd()
-    );
+    if (this.hiddenTextarea) {
+      this.hiddenTextarea.setSelectionRange(
+        this.getSelectionStart(),
+        this.getSelectionEnd()
+      );
+    }
     this.__drawCursorNow = true;
     this.__drawCursorTime = Math.floor(Date.now() / 500);
     return this;
@@ -628,11 +693,12 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       if (key === 16) {
         this.setMarkSelection(false);
       }
-
-      this.hiddenTextarea.setSelectionRange(
-        this.getSelectionStart(),
-        this.getSelectionEnd()
-      );
+      if (this.hiddenTextarea) {
+        this.hiddenTextarea.setSelectionRange(
+          this.getSelectionStart(),
+          this.getSelectionEnd()
+        );
+      }
     }
   },
   onInputUpdateStyleMap(start, length, action) {
@@ -763,10 +829,9 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
     }
   },
   setStyles(styles) {
-    if (!this.hiddenTextarea) return;
+    //if (!this.hiddenTextarea) return;
     let styleAll =
-      !this.isEditing &&
-      this.hiddenTextarea.selectionStart === this.hiddenTextarea.selectionEnd;
+      !this.isEditing && this.getSelectionEnd() === this.getSelectionStart();
     let start = this.isEditing ? this.getSelectionStart() : 0;
     let end = this.isEditing ? this.getSelectionEnd() : this.getTextLength();
     if (start === end && !styleAll && this.isEditing) {
@@ -832,7 +897,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
         this.cursorStyle = {
           ...this.cursorStyle,
           ...{
-            fontSize: fabric.util.parseUnit(`${charStyles.fontSize}pt`),
+            fontSize: charStyles.fontSize,
           },
         };
       }
@@ -840,7 +905,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
         this.cursorStyle = {
           ...this.cursorStyle,
           ...{
-            strokeWidth: fabric.util.parseUnit(`${charStyles.strokeWidth}pt`),
+            strokeWidth: charStyles.strokeWidth,
           },
         };
       }
@@ -851,7 +916,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
             leading:
               charStyles.leading === "auto"
                 ? charStyles.leading
-                : fabric.util.parseUnit(`${charStyles.leading}`),
+                : charStyles.leading,
           },
         };
       }
@@ -883,7 +948,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
         this._styleMap[i] = {
           ...this._styleMap[i],
           ...{
-            fontSize: fabric.util.parseUnit(`${charStyles.fontSize}pt`),
+            fontSize: charStyles.fontSize,
           },
         };
       }
@@ -891,7 +956,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
         this._styleMap[i] = {
           ...this._styleMap[i],
           ...{
-            strokeWidth: fabric.util.parseUnit(`${charStyles.strokeWidth}pt`),
+            strokeWidth: charStyles.strokeWidth,
           },
         };
       }
@@ -902,7 +967,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
             leading:
               charStyles.leading === "auto"
                 ? charStyles.leading
-                : fabric.util.parseUnit(`${charStyles.leading}pt`),
+                : charStyles.leading,
           },
         };
       }
@@ -1718,6 +1783,13 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       width: this.width,
       height: this.height,
       verticalAlign: this.verticalAlign,
+      ui: this.ui || {},
+      lockEditing: this.lockEditing,
+      lockMovementX: this.lockMovementX,
+      lockMovementY: this.lockMovementY,
+      lockScalingX: this.lockScalingX,
+      lockScalingY: this.lockScalingY,
+      lockRotation: this.lockRotation,
       //_styleMap: this._styleMap,
       text: this.text,
       fill: this.fill && this.fill.toObject(),
@@ -1799,7 +1871,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
             typeof styleAttributes[key] === "string" &&
             styleAttributes[key].toLowerCase() === "auto"
               ? styleAttributes[key]
-              : fabric.util.parseUnit(`${styleAttributes[key]}pt`);
+              : styleAttributes[key];
         }
       });
       styleBlocks.push({

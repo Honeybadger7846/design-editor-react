@@ -2,6 +2,7 @@ import * as React from "react";
 import useAppContext from "../../../../hooks/useAppContext";
 import { styled } from "baseui";
 import PanelListItem from "./PanelListItem";
+import UserLock from "../Users/UserLock";
 
 const panelListItems = [
   {
@@ -34,17 +35,22 @@ function PanelsList() {
   }));
   return (
     <Container>
-      {panelListItems.map((panelListItem) =>
-        userInterface.sideMenu && userInterface.sideMenu[panelListItem.id] ? (
-          <PanelListItem
-            label={panelListItem.name}
-            name={panelListItem.name}
-            key={panelListItem.name}
-            icon={panelListItem.name}
-            activePanel={activePanel}
-          />
-        ) : null
-      )}
+      {panelListItems.map((panelListItem) => (
+        <UserLock
+          type="template"
+          action={panelListItem.id}
+          key={panelListItem.name}
+          slot={
+            <PanelListItem
+              label={panelListItem.name}
+              name={panelListItem.name}
+              key={panelListItem.name}
+              icon={panelListItem.name}
+              activePanel={activePanel}
+            />
+          }
+        />
+      ))}
     </Container>
   );
 }

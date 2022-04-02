@@ -10,7 +10,7 @@ function Duplicate() {
       onClick={() => {
         editor.clone();
       }}
-      size={SIZE.default}
+      size={SIZE.compact}
       kind={KIND.tertiary}
       shape={SHAPE.square}
     >

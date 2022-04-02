@@ -20,7 +20,10 @@ const Container = styled("div", (props) => ({
 
 function NavbarEditor() {
   const editor = useEditor();
-  const { template } = useAppContext();
+  const { template, adminRole, setAdminRole, isMobile } = useAppContext();
+  const updateAdminRole = () => {
+    setAdminRole(!adminRole);
+  };
   const downloadImage = async () => {
     await api.downloadTemplate(template).then((result) => {
       function base64ToArrayBuffer(base64) {
@@ -112,6 +115,15 @@ function NavbarEditor() {
         </div>
         <div style={{ display: "flex", gap: "1rem" }}>
           <Zoom />
+          {isMobile ? null : (
+            <Button
+              onClick={updateAdminRole}
+              kind={KIND.primary}
+              size={SIZE.compact}
+            >
+              role
+            </Button>
+          )}
           <Button
             onClick={downloadImage}
             kind={KIND.primary}

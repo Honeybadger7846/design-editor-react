@@ -1,9 +1,12 @@
 import * as React from "react";
 import { styled } from "baseui";
 import { Scrollbars } from "react-custom-scrollbars";
+import { Button, SHAPE, KIND, SIZE } from "baseui/button";
 import { useEditor } from "../../../../../../src";
 import useAppContext from "../../../../hooks/useAppContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import UserLock from "../Users/UserLock";
+import Icons from "../icons";
 
 function Pages() {
   const editor = useEditor();
@@ -12,12 +15,15 @@ function Pages() {
     setTemplate,
     activePage,
     setActivePage,
-    userInterface,
+    adminRole,
     isMobile,
+    visiblePages,
+    setVisiblePages,
   } = useAppContext();
 
   const Container = styled("div", (props) => ({
     display: "flex",
+    flexDirection: "column",
     position: "absolute",
     bottom: isMobile ? "20px" : "20px",
     width: isMobile ? "90px" : "120px",
@@ -34,6 +40,40 @@ function Pages() {
     textAlign: "center",
     padding: "10px",
   }));
+
+  let togglePages = () => {
+    setVisiblePages(!visiblePages);
+  };
+  let addPage = () => {
+    const newPage = {
+      name: "New Page",
+      id: (Math.random() + 1).toString(36).substring(7),
+      objects: [],
+      background: "#ffffff",
+      size: {
+        width: 1280,
+        height: 720,
+      },
+      preview: "",
+    };
+    template.pages.push(newPage);
+    setTemplate(Object.assign({}, template));
+    // init page
+    setActivePage({ index: template.pages.length - 1 });
+  };
+
+  let removePage = (index) => {
+    if (confirm("Are you sure to delete this page ?") == true) {
+      template.pages = template.pages.filter(
+        (page, _index) => _index !== index
+      );
+      setTemplate(Object.assign({}, template));
+      // init first page
+      setActivePage(
+        template.pages[index - 1] ? { index: index - 1 } : { index: 0 }
+      );
+    }
+  };
 
   let setPage = (index) => {
     if (editor) editor.off("history:changed");
@@ -57,48 +97,92 @@ function Pages() {
       if (editor) editor.off("history:changed");
     };
   }, [activePage]);
-  useEffect(() => {}, [template]);
+  useEffect(() => {}, [template, visiblePages]);
   return (
     <Container>
-      <Scrollbars
-        autoHide
-        autoHideTimeout={1000}
-        autoHideDuration={200}
-        autoHeight
-        autoHeightMin={0}
-        autoHeightMax={isMobile ? 170 : 300}
-      >
-        {template &&
-          template.pages.map((page, index) =>
-            userInterface.page && userInterface.page.list ? (
-              <ZoomItemContainer onClick={() => setPage(index)} key={index}>
+      <Button size={SIZE.compact} kind={KIND.secondary} onClick={addPage}>
+        Add Page
+      </Button>
+      {visiblePages ? (
+        <Scrollbars
+          autoHide
+          autoHideTimeout={1000}
+          autoHideDuration={200}
+          autoHeight
+          autoHeightMin={0}
+          autoHeightMax={isMobile ? 170 : 300}
+        >
+          {template &&
+            template.pages.map((page, index) => (
+              <ZoomItemContainer key={index}>
                 {page.name}
+
                 <div
                   style={{
-                    display: "block",
-                    width: "100%",
-                    height: "100%",
-                    maxWidth: isMobile ? "80px" : "100px",
-                    maxHeight: isMobile ? "50px" : "60px",
-                    border:
-                      index === activePage.index
-                        ? "1px solid rgba(0, 0, 0, 1)"
-                        : "1px solid rgba(0, 0, 0, 0.2)",
-                    ":hover": {
-                      border: "1px solid rgba(0, 0, 0, 0.7)",
-                      cursor: "pointer",
-                    },
-                    cursor: "pointer",
-                    backgroundColor: "#ffffff",
-                    marginTop: "5px",
-                    aspectRatio: `${page.size.width} / ${page.size.height}`,
+                    position: "relative",
                   }}
-                  dangerouslySetInnerHTML={{ __html: page.preview }}
-                ></div>
+                >
+                  <div
+                    onClick={() => setPage(index)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      height: "100%",
+                      minHeight: "56px",
+                      maxWidth: isMobile ? "80px" : "100px",
+                      maxHeight: isMobile ? "56px" : "60px",
+                      border:
+                        index === activePage.index
+                          ? "1px solid rgba(0, 0, 0, 1)"
+                          : "1px solid rgba(0, 0, 0, 0.2)",
+                      ":hover": {
+                        border: "1px solid rgba(0, 0, 0, 0.7)",
+                        cursor: "pointer",
+                      },
+                      cursor: "pointer",
+                      backgroundColor: "#ffffff",
+                      marginTop: "5px",
+                      aspectRatio: `${page.size.width} / ${page.size.height}`,
+                    }}
+                    dangerouslySetInnerHTML={{ __html: page.preview }}
+                  ></div>
+
+                  <div
+                    style={{
+                      position: "absolute",
+                      overflow: "hidden",
+                      top: -8,
+                      right: -8,
+                      zIndex: 100,
+                    }}
+                  >
+                    <Button
+                      onClick={() => {
+                        removePage(index);
+                      }}
+                      size={SIZE.mini}
+                      kind={KIND.BaseButton}
+                      shape={SHAPE.circle}
+                      overrides={{
+                        BaseButton: {
+                          style: () => ({
+                            width: "22px",
+                            height: "22px",
+                          }),
+                        },
+                      }}
+                    >
+                      <Icons.Delete size={16} />
+                    </Button>
+                  </div>
+                </div>
               </ZoomItemContainer>
-            ) : null
-          )}
-      </Scrollbars>
+            ))}
+        </Scrollbars>
+      ) : null}
+      <Button size={SIZE.compact} onClick={togglePages}>
+        Pages ({template && template.pages && template.pages.length})
+      </Button>
     </Container>
   );
 }

@@ -1,36 +1,36 @@
 // @ts-nocheck
-import * as React from 'react'
-import Icons from '../../../icons'
-import { Button, SHAPE, KIND, SIZE } from 'baseui/button'
-import { StatefulPopover, PLACEMENT } from 'baseui/popover'
-import { Slider } from 'baseui/slider'
-import { useActiveObject, useEditor } from '../../../../../../../../src'
-import { useEffect, useState } from 'react'
+import * as React from "react";
+import Icons from "../../../icons";
+import { Button, SHAPE, KIND, SIZE } from "baseui/button";
+import { StatefulPopover, PLACEMENT } from "baseui/popover";
+import { Slider } from "baseui/slider";
+import { useActiveObject, useEditor } from "../../../../../../../../src";
+import { useEffect, useState } from "react";
 
 function Opacity() {
-  const [value, setValue] = useState([1])
-  const activeObject = useActiveObject()
-  const editor = useEditor()
+  const [value, setValue] = useState([1]);
+  const activeObject = useActiveObject();
+  const editor = useEditor();
   useEffect(() => {
-    updateOptions(activeObject)
-  }, [activeObject])
+    updateOptions(activeObject);
+  }, [activeObject]);
 
   useEffect(() => {
-    editor.on('history:changed', () => {
-      updateOptions(activeObject)
-    })
+    editor.on("history:changed", () => {
+      updateOptions(activeObject);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editor])
+  }, [editor]);
 
   const updateOptions = (object) => {
-    const updatedValue = [object.opacity * 100]
-    setValue(updatedValue)
-  }
+    const updatedValue = [object.opacity * 100];
+    setValue(updatedValue);
+  };
 
   const updateOpacity = (value) => {
-    const opacityValue = value[0] / 100
-    editor.update({ opacity: opacityValue })
-  }
+    const opacityValue = value[0] / 100;
+    editor.update({ opacity: opacityValue });
+  };
 
   return (
     <StatefulPopover
@@ -39,17 +39,17 @@ function Opacity() {
       content={({ close }) => (
         <div
           style={{
-            width: '380px',
-            background: '#ffffff',
-            fontFamily: 'Uber Move Text'
+            width: "380px",
+            background: "#ffffff",
+            fontFamily: "Uber Move Text",
           }}
         >
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'row',
-              padding: '1.5rem 2rem',
-              alignItems: 'center'
+              display: "flex",
+              flexDirection: "row",
+              padding: "1.5rem 2rem",
+              alignItems: "center",
             }}
           >
             <div>Transparency</div>
@@ -60,10 +60,10 @@ function Opacity() {
                 TickBar: () => null,
                 Thumb: {
                   style: {
-                    height: '20px',
-                    width: '20px'
-                  }
-                }
+                    height: "20px",
+                    width: "20px",
+                  },
+                },
               }}
               min={0}
               max={100}
@@ -76,11 +76,11 @@ function Opacity() {
         </div>
       )}
     >
-      <Button size={SIZE.default} kind={KIND.tertiary} shape={SHAPE.square}>
+      <Button size={SIZE.compact} kind={KIND.tertiary} shape={SHAPE.square}>
         <Icons.Opacity size={24} />
       </Button>
     </StatefulPopover>
-  )
+  );
 }
 
-export default Opacity
+export default Opacity;

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Button, KIND } from "baseui/button";
+import { Button, KIND, SIZE } from "baseui/button";
 import { styled, ThemeProvider, LightTheme } from "baseui";
 import { Select, Value } from "baseui/select";
 import { Input } from "baseui/input";
@@ -40,6 +40,32 @@ export default function Page() {
   const [customSize, setCustomSize] = useState({ width: 0, height: 0 });
   const [name, setName] = useState("");
   const [unitValue, setUnitValue] = useState([]);
+  const convertToPx = (unit, value) => {
+    let dpi = 96; // window.devicePixelRatio
+    switch (unit) {
+      case "Pixel":
+        return Number(value);
+      case "Centimeter":
+        return ((Number(value) * dpi) / 2.54).toFixed(2);
+      case "Inch":
+        return (Number(value) * dpi).toFixed(2);
+      default:
+        return Number(value);
+    }
+  };
+  const convertFromPx = (unit, value) => {
+    let dpi = 96; // window.devicePixelRatio
+    switch (unit) {
+      case "Pixel":
+        return Number(value);
+      case "Centimeter":
+        return ((Number(value) / dpi) * 2.54).toFixed(2);
+      case "Inch":
+        return (Number(value) / dpi).toFixed(2);
+      default:
+        return Number(value);
+    }
+  };
   const updateTemplate = () => {
     if (template && template.pages) {
       template.pages[activePage.index] = editor.exportToJSON();
@@ -64,7 +90,10 @@ export default function Page() {
   };
   const applyCustomSize = () => {
     if (customSize.width && customSize.height) {
-      editor.page.update(customSize);
+      editor.page.update({
+        width: Number(convertToPx(template.unit, customSize.width)),
+        height: Number(convertToPx(template.unit, customSize.height)),
+      });
       updateTemplate();
     }
   };
@@ -74,8 +103,8 @@ export default function Page() {
       setName(page.name);
       setUnitValue([{ name: template.unit }]);
       setCustomSize({
-        width: page.size.width,
-        height: page.size.height,
+        width: Number(convertFromPx(template.unit, page.size.width)),
+        height: Number(convertFromPx(template.unit, page.size.height)),
       });
     }
   }, [template, activePage]);
@@ -184,7 +213,9 @@ export default function Page() {
         </ThemeProvider>
       )}
     >
-      <Button kind={KIND.tertiary}>Edit Page</Button>
+      <Button size={SIZE.compact} kind={KIND.tertiary}>
+        Resize
+      </Button>
     </StatefulPopover>
   );
 }

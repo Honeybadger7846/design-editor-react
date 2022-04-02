@@ -15,7 +15,7 @@ function Default() {
     setTemplate,
     activePage,
     setActivePage,
-    userInterface,
+    adminRole,
   } = useAppContext();
   let addPage = () => {
     const newPage = {
@@ -56,40 +56,12 @@ function Default() {
         alignItems: "center",
         justifyContent: "space-between",
         padding: "0 1rem",
+        height: "56px",
       }}
     >
       <div style={{ display: "flex" }}>
-        {userInterface.page && userInterface.page.add ? (
-          <Button
-            onClick={() => addPage()}
-            size={SIZE.default}
-            kind={KIND.tertiary}
-            disabled={template ? false : true}
-          >
-            {" "}
-            <Plus size={24} /> New Page
-          </Button>
-        ) : null}
-        {template &&
-        template.pages.length > 0 &&
-        userInterface.page &&
-        userInterface.page.edit ? (
-          <Page />
-        ) : null}
+        {template && template.pages.length > 0 ? <Page /> : null}
       </div>
-      {template &&
-      template.pages.length > 0 &&
-      userInterface.page &&
-      userInterface.page.remove ? (
-        <Button
-          onClick={() => removePage()}
-          size={SIZE.default}
-          kind={KIND.tertiary}
-          shape={SHAPE.square}
-        >
-          <Icons.Delete size={24} />
-        </Button>
-      ) : null}
     </div>
   );
 }

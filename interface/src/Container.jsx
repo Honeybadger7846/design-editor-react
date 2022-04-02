@@ -6,7 +6,7 @@ import Loading from "./components/Loading";
 
 function Container({ children }) {
   const containerRef = useRef();
-  const { isMobile, setIsMobile } = useAppContext();
+  const { isMobile, setIsMobile, setVisiblePages } = useAppContext();
   const [loaded, setLoaded] = useState(false);
 
   const updateMediaQuery = (value) => {
@@ -14,6 +14,7 @@ function Container({ children }) {
       setIsMobile(false);
     } else if (!isMobile && value < 800) {
       setIsMobile(true);
+      setVisiblePages(false);
     } else {
       setIsMobile(false);
     }

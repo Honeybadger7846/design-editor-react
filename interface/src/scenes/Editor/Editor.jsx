@@ -17,7 +17,7 @@ function App(props) {
     setPhotos,
     setFonts,
     setActivePage,
-    setUserInterface,
+    setAdminRole,
     isMobile,
   } = useAppContext();
   const editor = useEditor();
@@ -26,7 +26,7 @@ function App(props) {
     api.getElements().then((elements) => setElements(elements));
     api.getPhotos().then((photos) => setPhotos(photos));
     if (props.interface) {
-      setUserInterface(props.interface);
+      setAdminRole(props.adminRole);
     }
   }, []);
   useEffect(() => {

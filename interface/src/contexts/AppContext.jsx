@@ -22,8 +22,10 @@ export const AppContext = createContext({
   setActivePanel: () => {},
   activeSubMenu: null,
   setActiveSubMenu: (value) => {},
-  userInterface: {},
-  setUserInterface: (value) => {},
+  adminRole: false,
+  setAdminRole: (value) => {},
+  visiblePages: true,
+  setVisiblePages: () => {},
 });
 export const AppProvider = ({ children }) => {
   const [isMobile, setIsMobile] = useState(undefined);
@@ -36,7 +38,8 @@ export const AppProvider = ({ children }) => {
   const [fonts, setFonts] = useState([]);
   const [activePanel, setActivePanel] = useState(PanelType.TEMPLATES);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
-  const [userInterface, setUserInterface] = useState({});
+  const [adminRole, setAdminRole] = useState(false);
+  const [visiblePages, setVisiblePages] = useState(true);
   const context = {
     isMobile,
     setIsMobile,
@@ -58,8 +61,10 @@ export const AppProvider = ({ children }) => {
     setFonts,
     activeSubMenu,
     setActiveSubMenu,
-    userInterface,
-    setUserInterface,
+    adminRole,
+    setAdminRole,
+    visiblePages,
+    setVisiblePages,
   };
   return <AppContext.Provider value={context}>{children}</AppContext.Provider>;
 };

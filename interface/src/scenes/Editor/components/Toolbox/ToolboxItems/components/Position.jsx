@@ -10,6 +10,13 @@ function Position() {
     <StatefulPopover
       focusLock
       placement={PLACEMENT.bottom}
+      overrides={{
+        Body: {
+          style: () => ({
+            top: "56px",
+          }),
+        },
+      }}
       content={({ close }) => (
         <div>
           <div
