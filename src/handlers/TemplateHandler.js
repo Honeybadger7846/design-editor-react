@@ -25,6 +25,15 @@ class TemplateHandler extends BaseHandler {
       background.center();
     }
   }
+  setPosition(options) {
+    const background = this.getBackground();
+    if (background) {
+      const { left, top } = options;
+      background.set("left", left);
+      background.set("top", top);
+      //background.center();
+    }
+  }
   getBackground() {
     return this.canvas
       .getObjects()
@@ -39,6 +48,10 @@ class TemplateHandler extends BaseHandler {
       id: page.id,
       objects: [],
       background: frameOptions.fill || "#fff",
+      position: {
+        left: frameOptions.left,
+        top: frameOptions.top,
+      },
       size: {
         width: frameOptions.width,
         height: frameOptions.height,
@@ -59,6 +72,7 @@ class TemplateHandler extends BaseHandler {
     this.handlers.objectsHandler.deselect();
     this.handlers.pageHandler.initialize();
     this.handlers.pageHandler.setSize(page.size);
+    this.handlers.pageHandler.setPosition(page.position);
     this.handlers.pageHandler.setName(page.name);
     this.handlers.pageHandler.setId(page.id);
     this.handlers.pageHandler.setBackgroundColor(page.background || "#fff");

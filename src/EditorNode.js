@@ -26,6 +26,8 @@ export default class {
     const page = new fabric.Page({
       width: template.size.width,
       height: template.size.height,
+      left: template.position.left,
+      top: template.position.top,
       name: template.name,
       id: template.id,
       fill: template.background,
@@ -90,7 +92,9 @@ export default class {
         width: svgPage.width,
         height: svgPage.height,
         preserveAspectRatio: `${svgPage.width}x${svgPage.height}`,
-        imageCallback: function (opt) {},
+        imageCallback: function (opt) {
+          return opt;
+        },
       });
     });
     doc.end();

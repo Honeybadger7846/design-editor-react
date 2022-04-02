@@ -135,6 +135,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
   __drawCursorNow: false,
   __drawCursorTime: Math.floor(Date.now() / 500),
   markSelection: false,
+  autoResize: 300,
   initialize: function (options) {
     //DO NOT REMOVE.
     //this._fallbackStyles.fontSize = fabric.util.parseUnit(`20pt`)
@@ -1398,6 +1399,28 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
         maxLineWidth = Math.max(maxLineWidth, line.width);
       });
       this.width = maxLineWidth;
+
+      // auto resize feature
+      /*
+      if (this.autoResize > 0 && this.width > this.autoResize) {
+        this._autoResizeScaleFactor = this.width / this.autoResize;
+        if (this.cursorStyle && this.cursorStyle.fontSize)
+          this.cursorStyle.fontSize =
+            this.cursorStyle.fontSize / this._autoResizeScaleFactor;
+
+        //this.scaleX = scaleFactor;
+        //this.scaleY = scaleFactor;
+        console.log(this.cursorStyle);
+
+        this._styleMap.forEach((style) => {
+          style.fontSize = Math.floor(
+            style.fontSize / this._autoResizeScaleFactor
+          );
+        });
+
+        this.width = this.autoResize;
+      }
+      */
     }
     if (this._layout) {
       this._layout.lines.forEach((line) => {
@@ -1790,6 +1813,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       lockScalingX: this.lockScalingX,
       lockScalingY: this.lockScalingY,
       lockRotation: this.lockRotation,
+      autoResize: this.autoResize,
       //_styleMap: this._styleMap,
       text: this.text,
       fill: this.fill && this.fill.toObject(),
@@ -1829,11 +1853,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
             (typeof charStyle[style] !== "string" ||
               charStyle[style].toLowerCase() !== "auto")
           ) {
-            tagStyles.push(
-              `${style}="${Number(
-                Math.round((charStyle[style] / fabric.DPI) * 72 + "e2") + "e-2"
-              )}"`
-            );
+            tagStyles.push(`${style}="${Number(charStyle[style])}"`);
           } else {
             tagStyles.push(`${style}="${charStyle[style]}"`);
           }
@@ -1938,11 +1958,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       strokeWidth:
         typeof this.getCompleteStyle("strokeWidth") === "string"
           ? this.getCompleteStyle("strokeWidth")
-          : Number(
-              Math.round(
-                (this.getCompleteStyle("strokeWidth") / fabric.DPI) * 72 + "e2"
-              ) + "e-2"
-            ),
+          : Number(this.getCompleteStyle("strokeWidth")),
       tracking:
         this.getCompleteStyle("tracking") === false
           ? 0
@@ -1952,11 +1968,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       leading:
         typeof this.getCompleteStyle("leading") === "string"
           ? this.getCompleteStyle("leading")
-          : Number(
-              Math.round(
-                (this.getCompleteStyle("leading") / fabric.DPI) * 72 + "e2"
-              ) + "e-2"
-            ),
+          : Number(this.getCompleteStyle("leading")),
       lineAlign: this.getCompleteStyle("lineAlign"),
       underline: this.getCompleteStyle("underline"),
       opacity: this.opacity,

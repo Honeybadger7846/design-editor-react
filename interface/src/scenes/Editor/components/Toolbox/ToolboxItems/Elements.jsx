@@ -36,7 +36,7 @@ function Elements() {
         }
       />
       <div style={{ display: "flex", alignItems: "center" }}>
-        <UserLock type="element" action="lock" slot={<Lock />} />
+        <UserLock type="element" action="lock" admin={true} slot={<Lock />} />
         <UserLock type="element" action="position" slot={<Position />} />
         <UserLock type="element" action="opacity" slot={<Opacity />} />
         <UserLock type="element" action="duplicate" slot={<Duplicate />} />

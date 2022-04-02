@@ -27,6 +27,10 @@ export default [
           },
         ],
         background: "#ffffff",
+        position: {
+          left: 0,
+          top: 0,
+        },
         size: {
           width: 1280,
           height: 720,
@@ -38,6 +42,10 @@ export default [
         id: "id1",
         objects: [],
         background: "#ffffff",
+        position: {
+          left: 0,
+          top: 0,
+        },
         size: {
           width: 1280,
           height: 720,
@@ -49,6 +57,10 @@ export default [
         id: "id2",
         objects: [],
         background: "#ffffff",
+        position: {
+          left: 0,
+          top: 0,
+        },
         size: {
           width: 1280,
           height: 720,
@@ -134,6 +146,10 @@ export default [
           },
         ],
         background: "#ffffff",
+        position: {
+          left: 0,
+          top: 0,
+        },
         size: {
           width: 1080,
           height: 1920,

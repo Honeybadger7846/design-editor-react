@@ -26,9 +26,17 @@ class PanZoomHandler extends BaseHandler {
   }
   zoomToFit() {
     const zoomFitRatio = this.handlers.pageHandler.getFitRatio();
+    const page = this.handlers.pageHandler.getPage();
+    if (!page) return;
     const center = this.canvas.getCenter();
-    this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
-    this.zoomToPoint(new fabric.Point(center.left, center.top), zoomFitRatio);
+    this.canvas.setViewportTransform([
+      zoomFitRatio,
+      0,
+      0,
+      zoomFitRatio,
+      page.left + this.canvas.getWidth() * 0.05,
+      page.top + this.canvas.getHeight() * 0.05,
+    ]);
     this.context.setZoomRatio(zoomFitRatio);
   }
   zoomToRatio(zoomRatio) {

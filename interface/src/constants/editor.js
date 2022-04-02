@@ -15,6 +15,10 @@ export const Template = {
       id: 0,
       objects: [],
       background: "#ffffff",
+      position: {
+        left: 0,
+        top: 0,
+      },
       size: {
         width: 1280,
         height: 720,

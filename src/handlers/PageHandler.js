@@ -19,13 +19,23 @@ class PageHandler extends BaseHandler {
         height: "100%",
       });
     };
+    this.setPosition = (options) => {
+      const page = this.getPage();
+      if (page) {
+        const { left, top } = options;
+        page.set("left", left);
+        page.set("top", top);
+        this.handlers.templateHandler.setPosition(options);
+      }
+      this.handlers.zoomHandler.zoomToFit();
+    };
     this.setSize = (options) => {
       const page = this.getPage();
       if (page) {
         const { width, height } = options;
         page.set("width", width);
         page.set("height", height);
-        page.center();
+        //page.center();
         this.handlers.templateHandler.setSize(options);
       }
       this.handlers.zoomHandler.zoomToFit();
@@ -56,8 +66,9 @@ class PageHandler extends BaseHandler {
       return page.toJSON(this.handlers.propertiesToInclude);
     };
     this.getFitRatio = () => {
-      const canvasWidth = this.canvas.getWidth() - 120;
-      const canvasHeight = this.canvas.getHeight() - 120;
+      const canvasWidth = this.canvas.getWidth() - this.canvas.getWidth() * 0.1;
+      const canvasHeight =
+        this.canvas.getHeight() - this.canvas.getHeight() * 0.1;
       const options = this.getOptions();
       let scaleX = canvasWidth / options.width;
       let scaleY = canvasHeight / options.height;
@@ -79,6 +90,8 @@ class PageHandler extends BaseHandler {
     const page = new fabric.Page({
       width: 1280,
       height: 720,
+      left: 0,
+      top: 0,
       name: "Page 1",
       fill: "#ffffff",
       hoverCursor: "default",

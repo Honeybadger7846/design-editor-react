@@ -52,7 +52,7 @@ function UserLock(props) {
           props.type === "element" && (!value || adminRole) ? "5px" : "inherit",
       }}
     >
-      {props && (!value || adminRole) && props.slot}
+      {props && ((!value && !props.admin) || adminRole) && props.slot}
       {adminRole ? (
         <div
           style={{
