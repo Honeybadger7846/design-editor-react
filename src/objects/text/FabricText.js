@@ -220,15 +220,10 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       }
       if (this._selected) delete this._selected;
     });
-    /*
-    this.on("mousedblclick", () => {
-      if (!this.isEditing) {
-        this.enterEditing();
-      }
-    });
-    */
     this.on("deselected", () => {
-      this.exitEditing();
+      if (this.isEditing) {
+        this.exitEditing();
+      }
     });
     /*
 		this.on('scaled', () => {
@@ -333,12 +328,10 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
     this.isEditing = true;
 
     this.hoverCursor = "text";
-    console.log("HAPPENING");
-    // this._lockMovementX = this.lockMovementX;
-    // this._lockMovementY = this.lockMovementY;
-    this.locked = true;
-    //this.lockMovementX = true;
-    //this.lockMovementY = true;
+    this._lockMovementX = this.lockMovementX;
+    this._lockMovementY = this.lockMovementY;
+    this.lockMovementX = true;
+    this.lockMovementY = true;
     this.fire("editing:entered");
     this.setControlsVisibility({
       bl: false,
@@ -366,8 +359,8 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
     this.isEditing = false;
     this.hoverCursor = "all-scroll";
     this.locked = false;
-    //this.lockMovementX = this._lockMovementX;
-    //this.lockMovementY = this._lockMovementY;
+    this.lockMovementX = this._lockMovementX;
+    this.lockMovementY = this._lockMovementY;
     this.setControlsVisibility({
       bl: true,
       br: true,
