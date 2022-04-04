@@ -9,8 +9,9 @@ import SVGtoPDF from "svg-to-pdfkit";
 import { Base64Encode } from "base64-stream";
 import EditorNode from "../src/EditorNode.js";
 import Templates from "./templates.js";
-import base64Img from "base64-img";
-fabric.base64Img = base64Img;
+import { encode, decode } from "node-base64-image";
+fabric._encode = encode;
+fabric._decode = decode;
 PDFDocument.prototype.addSVG = function (svg, x, y, options) {
   return SVGtoPDF(this, svg, x, y, options), this;
 };

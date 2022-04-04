@@ -333,10 +333,12 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
     this.isEditing = true;
 
     this.hoverCursor = "text";
-    this._lockMovementX = this.lockMovementX;
-    this._lockMovementY = this.lockMovementY;
-    this.lockMovementX = true;
-    this.lockMovementY = true;
+    console.log("HAPPENING");
+    // this._lockMovementX = this.lockMovementX;
+    // this._lockMovementY = this.lockMovementY;
+    this.locked = true;
+    //this.lockMovementX = true;
+    //this.lockMovementY = true;
     this.fire("editing:entered");
     this.setControlsVisibility({
       bl: false,
@@ -363,8 +365,9 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
   exitEditing() {
     this.isEditing = false;
     this.hoverCursor = "all-scroll";
-    this.lockMovementX = this._lockMovementX;
-    this.lockMovementY = this._lockMovementY;
+    this.locked = false;
+    //this.lockMovementX = this._lockMovementX;
+    //this.lockMovementY = this._lockMovementY;
     this.setControlsVisibility({
       bl: true,
       br: true,
