@@ -12,6 +12,7 @@ import { StatefulMenu } from "baseui/menu";
 import Delete from "./components/Delete";
 import Duplicate from "./components/Duplicate";
 import Opacity from "./components/Opacity";
+import AutoResize from "./components/AutoResize";
 import UserLock from "../../Users/UserLock";
 import Position from "./components/Position";
 import Lock from "./components/Lock";
@@ -257,6 +258,7 @@ function Text() {
               </Button>
             }
           />
+          <UserLock type="element" action="autoResize" slot={<AutoResize />} />
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center" }}>

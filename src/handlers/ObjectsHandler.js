@@ -71,13 +71,11 @@ class ObjectHandler extends BaseHandler {
             }
           }
           if (property === "ui") {
-            console.log("happens");
             //activeObject.set(property, options[property]);
           }
           activeObject.set(property, options[property]);
           canvas.requestRenderAll();
         }
-        console.log("AJUNGEM");
         this.handlers.historyHandler.save("object:updated");
       }
     };

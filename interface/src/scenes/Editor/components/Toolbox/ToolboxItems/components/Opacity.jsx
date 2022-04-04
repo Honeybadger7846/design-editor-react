@@ -35,7 +35,14 @@ function Opacity() {
   return (
     <StatefulPopover
       focusLock
-      placement={PLACEMENT.bottomRight}
+      placement={PLACEMENT.bottom}
+      overrides={{
+        Body: {
+          style: () => ({
+            top: "56px",
+          }),
+        },
+      }}
       content={({ close }) => (
         <div
           style={{

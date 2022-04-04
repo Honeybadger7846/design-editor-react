@@ -135,7 +135,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
   __drawCursorNow: false,
   __drawCursorTime: Math.floor(Date.now() / 500),
   markSelection: false,
-  autoResize: 300,
+  autoResize: 0,
   initialize: function (options) {
     //DO NOT REMOVE.
     //this._fallbackStyles.fontSize = fabric.util.parseUnit(`20pt`)
@@ -377,6 +377,16 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       delete this.__borderColor;
     }
     this.destroyTextarea();
+    this._styleMap.forEach((style) => {
+      style.fontSize *= this.scaleX;
+    });
+    this.scaleX = 1;
+    this.scaleY = 1;
+    this.computeLayout();
+    if (this.autoResize > 0 && this.autoResize < this.width) {
+      this.autoResize = this.width;
+    }
+    this.setCoords();
     this.fire("editing:exited");
     if (this.canvas) {
       this.canvas.fire("text:editing:exited", {
@@ -1401,26 +1411,18 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       this.width = maxLineWidth;
 
       // auto resize feature
-      /*
-      if (this.autoResize > 0 && this.width > this.autoResize) {
-        this._autoResizeScaleFactor = this.width / this.autoResize;
-        if (this.cursorStyle && this.cursorStyle.fontSize)
-          this.cursorStyle.fontSize =
-            this.cursorStyle.fontSize / this._autoResizeScaleFactor;
 
-        //this.scaleX = scaleFactor;
-        //this.scaleY = scaleFactor;
-        console.log(this.cursorStyle);
-
-        this._styleMap.forEach((style) => {
-          style.fontSize = Math.floor(
-            style.fontSize / this._autoResizeScaleFactor
-          );
-        });
-
+      if (
+        this.autoResize > 0 &&
+        this.width * this.scaleX > this.autoResize &&
+        this.isEditing
+      ) {
+        this._autoResizeScaleFactor =
+          (this.width * this.scaleX) / this.autoResize;
+        this.scaleX = this.scaleX / this._autoResizeScaleFactor;
+        this.scaleY = this.scaleY / this._autoResizeScaleFactor;
         this.width = this.autoResize;
       }
-      */
     }
     if (this._layout) {
       this._layout.lines.forEach((line) => {
@@ -1601,6 +1603,25 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
       this.__drawCursorNow = false;
     }
   },
+  _drawAutoResizeOutline: function (ctx) {
+    let isActiveObject = this.canvas && this.canvas._activeObject === this;
+    if (
+      ((this.autoResize > 0 && this.isEditing) ||
+        this.autoResize > this.width * this.scaleX) &&
+      isActiveObject
+    ) {
+      ctx.save();
+      ctx.setLineDash([5, 15]);
+      ctx.strokeStyle = "#3a86ff";
+      ctx.strokeRect(
+        -this.width / 2,
+        -this.height / 2,
+        this.autoResize / this.scaleX,
+        this.height
+      );
+      ctx.restore();
+    }
+  },
   _render: function (ctx) {
     ctx.save();
     if (this._layout) {
@@ -1613,6 +1634,7 @@ fabric.StaticText = fabric.util.createClass(fabric.Object, {
         this.drawPathGlyph(glyph[i], ctx);
       }
       this.drawCursor(ctx);
+      this._drawAutoResizeOutline(ctx);
     }
     ctx.restore();
   },

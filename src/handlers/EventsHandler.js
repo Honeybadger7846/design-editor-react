@@ -124,13 +124,18 @@ class EventsHandler extends BaseHandler {
       this.canvas.selection = true;
     };
     this.scaleTextbox = (target) => {
-      target._styleMap.forEach((style) => {
-        style.fontSize = Math.floor(style.fontSize * target.scaleX);
-      });
-      target.scaleX = 1;
-      target.scaleY = 1;
-      target.computeLayout();
-      target.setCoords();
+      if (target.scaleX !== 1 || target.scaleY !== 1) {
+        target._styleMap.forEach((style) => {
+          style.fontSize = Math.floor(style.fontSize * target.scaleX);
+        });
+        target.scaleX = 1;
+        target.scaleY = 1;
+        target.computeLayout();
+        if (target.autoResize > 0) {
+          target.autoResize = target.width;
+        }
+        target.setCoords();
+      }
     };
     this.initialize();
   }

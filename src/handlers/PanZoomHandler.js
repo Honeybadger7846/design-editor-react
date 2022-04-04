@@ -28,14 +28,18 @@ class PanZoomHandler extends BaseHandler {
     const zoomFitRatio = this.handlers.pageHandler.getFitRatio();
     const page = this.handlers.pageHandler.getPage();
     if (!page) return;
-    const center = this.canvas.getCenter();
+    let pageCenter = page.getCenterPoint();
+    let offset = {
+      x: -pageCenter.x * zoomFitRatio + this.canvas.width / 2,
+      y: -pageCenter.y * zoomFitRatio + this.canvas.height / 2,
+    };
     this.canvas.setViewportTransform([
       zoomFitRatio,
       0,
       0,
       zoomFitRatio,
-      page.left + this.canvas.getWidth() * 0.05,
-      page.top + this.canvas.getHeight() * 0.05,
+      offset.x,
+      offset.y,
     ]);
     this.context.setZoomRatio(zoomFitRatio);
   }
